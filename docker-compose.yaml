@@ -1,6 +1,6 @@
 services:
   redmine:
-    image: redmine:latest
+    image: redmine:5
     restart: always
     ports:
       - 8080:3000
@@ -13,18 +13,29 @@ services:
       REDMINE_SECRET_KEY_BASE: supersecretkey
     volumes:
       - vol_redmine:/usr/src/redmine/files
+    networks:
+      - internal_network
+      - external_network
 
   redmine_db:
-    image: postgres:15.1-bullseye
+    image: postgres:16
     ports:
       - 5432:5432
     environment:
       POSTGRES_DB: redmine
       POSTGRES_USER: redmine_user
       POSTGRES_PASSWORD: redmine_password
+    networks:
+      - internal_network
     volumes:
       - vol_redmine_db:/var/lib/postgresql/data
 
 volumes:
   vol_redmine:
   vol_redmine_db:
+
+networks:
+  internal_network:
+    internal: true
+  external_network:
+    internal: false
